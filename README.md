@@ -48,7 +48,7 @@ g) Ready to complete: click `Back`. Click `Finish`
 
 h) Now that you that created a VM, double click on your VM.
 
-![Creating vm](gifs/create-vm.gif)
+![creating vm](gifs/create-vm.gif)
 
 Note: this gif does not contain enabling `CPU Hardware virtualization` and `CPU Performance counters`. This must be enabled.
 
@@ -106,11 +106,23 @@ a) In your selected terminal enter the `ssh dev1@172.16.2.64` and enter the pass
 
 ## 4. Installing kubernetes
 
-a) Create a file called `setup1.sh` and copy and paste the code from the bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup1.sh`. Finally, exectute the file using `./setup1.sh`
+a) Enter the commands
 
-b) Use the command `sudo -i`. Once you are running in root, create another file called `setup2.sh` with the code from bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup2.sh`. Finally, exectute the file using `./setup2.sh` and enter `exit` to leave root.
+```console
+git clone https://github.com/UErenReply/bt-project.git
 
-c) Once have exited from the root, create another file called `setup3.sh` with the code from bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup3.sh`. Finally, exectute the file using `./setup3.sh` and enter `exit` to leave root.
+sudo cp setup2.sh /root/
+
+chmod +x setup1.sh
+chmod +x setup2.sh
+chmod +x setup3.sh
+```
+
+b) Exectute the file setup1.sh using `./setup1.sh`
+
+c) Use the command `sudo -i`. Once you are running in root, exectute the file setup2.sh using `./setup2.sh` and leave the root using the command `exit`.
+
+d) Once have exited from the root, exectute the file setup3.sh using `./setup3.sh`.
 
 d) To check if k8s is installed correctly, execute the command `kubectl get nodes`. The output should look similar to:
 
