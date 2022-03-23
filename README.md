@@ -2,7 +2,11 @@
 
 ## Introduction
 
-This guide will show you how to create a VM in the vmware EXSI dashboard.
+This guide will show you how to create a VM in the vmware EXSI dashboard and how to install kubernetes, docker and rancher.
+
+This guide will only show you how to install a 1 node cluster. Not a 3 node cluster.
+
+For more detail on how to install a sigle node cluster refer to this guide https://citizix.com/how-to-set-up-kubernetes-cluster-on-ubuntu-20-04-with-kubeadm-and-cri-o/ .
 
 ## 1. Creating VM in vmware EXSI dashboard
 
