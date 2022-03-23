@@ -106,121 +106,15 @@ a) In your selected terminal enter the `ssh dev1@172.16.2.64` and enter the pass
 
 ## 4. Installing kubernetes
 
-a) Create another vm to install k8s master node and worker nodes. To create the vm and its terminal, execute the following commands:
+a) Create a file called `setup1.sh` and copy and paste the code from the bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup1.sh`. Finally, exectute the file using `./setup1.sh`
 
-```console
-sudo snap install multipass --channel=edge
+b) Use the command `sudo -i`. Once you are running in root, create another file called `setup2.sh` with the code from bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup2.sh`. Finally, exectute the file using `./setup2.sh` and enter `exit` to leave root.
 
-multipass launch -c 2 -m 4G --disk 20G -n ubuntu
+c) Once have exited from the root, create another file called `setup3.sh` with the code from bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup3.sh`. Finally, exectute the file using `./setup3.sh` and enter `exit` to leave root.
 
-multipass shell ubuntu
-```
-
-b) Create a file called `setup1.sh` and copy and paste the code from the bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup1.sh`. Finally, exectute the file using `./setup1.sh`
-
-```console
-# Ensure that the server is up to date
-sudo apt-get update && sudo apt-get upgrade -y
-
-
-# Install kubelet, kubeadm and kubectl
-sudo apt -y install curl apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-sudo apt update
-sudo apt -y install vim git curl wget kubelet kubeadm kubectl
-sudo apt-mark hold kubelet kubeadm kubectl
-
-echo "confirm kubctl installation with"
-kubectl version --client && kubeadm version
-
-echo "disable Swap and Enable Kernel modules"
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-sudo swapoff -a
-
-echo "enable kernel modules"
-sudo modprobe overlay
-sudo modprobe br_netfilter
-
-echo "add some settings to sysctl"
-sudo tee /etc/sysctl.d/kubernetes.conf<<EOF
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
-EOF
-
-echo "reload sysctl"
-sudo sysctl --system
-```
-
-c) Use the command `sudo -i`. Once you are running in root, create another file called `setup2.sh` with the code from bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup2.sh`. Finally, exectute the file using `./setup2.sh` and enter `exit` to leave root.
-
-```console
-echo "Install Container runtime (CRI-O)"
-
-OS=xUbuntu_20.04
-VERSION=1.22
-
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
-
-curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | apt-key add -
-
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | apt-key add -
-```
-
-d) Once have exited from the root, create another file called `setup3.sh` with the code from bellow. Once the file has been created, you must change the permission on the file using the command `chmod +x setup3.sh`. Finally, exectute the file using `./setup3.sh` and enter `exit` to leave root.
-
-```console
-echo "Install Container runtime (CRI-O)"
-
-sudo apt update
-sudo apt install cri-o cri-o-runc
-
-# check if CRI-O is installed
-# apt-cache policy cri-o
-
-sudo systemctl enable crio --now
-
-# Start and enable CRI-O
-sudo systemctl daemon-reload
-sudo systemctl enable crio --now
-
-lsmod | grep br_netfilter
-sudo systemctl enable kubelet
-sudo kubeadm config images pull
-
-sudo kubeadm init \
-  --pod-network-cidr=10.10.0.0/16
-
-echo " if ports are used follow this guide to reset ports https://stackoverflow.com/questions/41732265/how-to-use-kubeadm-to-create-kubernetes-cluster"
-echo " use https://askubuntu.com/questions/1230753/login-and-password-for-multipass-instance to create password for sudo priv"
-
-mkdir -p $HOME/.kube
-sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-echo "check if cluster is working"
-echo "kubectl cluster-info"
-
-echo " Scheduling pods on Master"
-kubectl taint nodes --all node-role.kubernetes.io/master-
-```
-
-e) To check if k8s is installed correctly, execute the command `kubectl get nodes`. The output should look similar to:
+d) To check if k8s is installed correctly, execute the command `kubectl get nodes`. The output should look similar to:
 
 ```console
 NAME     STATUS   ROLES                  AGE    VERSION
 ubuntu   Ready    control-plane,master   6m5s   v1.23.5
-```
-
-## 5. Installing docker and rancher
-
-a) To install docker (through rancher not docker official documentation) and rancher enter the commands
-
-```console
-curl https://releases.rancher.com/install-docker/20.10.sh | sh
-
-sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
 ```
